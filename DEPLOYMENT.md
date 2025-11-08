@@ -45,12 +45,13 @@ Vercel will automatically detect this as a React app, but you can customize:
 In your Vercel project settings, add:
 
 - `REACT_APP_API_URL`: Your backend API URL
+  - For Vercel backend: `https://requestsong-backend.vercel.app`
   - For Fly.io: `https://requestr-backend.fly.dev`
   - For Render: `https://your-service-name.onrender.com`
   - For local development: `http://localhost:8000`
 - `CI`: Set to `false` to prevent treating warnings as errors
 
-**Note**: The `vercel.json` file already includes `CI=false` in the environment variables to prevent build failures from ESLint warnings.
+**Note**: The `vercel.json` file already includes the correct backend URL and `CI=false` in the environment variables.
 
 ### 4. Deploy
 
@@ -130,9 +131,15 @@ The `vercel.json` file in the frontend directory configures:
 ### Common Issues
 
 1. **API Connection Errors**
-   - Verify `REACT_APP_API_URL` is set correctly
+   - Verify `REACT_APP_API_URL` is set correctly in Vercel dashboard or `vercel.json`
    - Check CORS configuration in your backend
    - Ensure backend is deployed and accessible
+   - **If still using localhost**: Redeploy your frontend after updating the environment variable
+
+2. **Frontend still calling localhost**
+   - Check that `REACT_APP_API_URL` is set in your Vercel project settings
+   - Redeploy the frontend after changing environment variables
+   - Verify the environment variable is being used: check browser network tab
 
 2. **Build Failures**
    - Check build logs in Vercel dashboard
