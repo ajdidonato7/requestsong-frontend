@@ -1,0 +1,16 @@
+{
+  "short_name": "Requestr",
+  "name": "Requestr - Live Music Requests",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#f9fafb",
+  "orientation": "portrait-primary"
+}

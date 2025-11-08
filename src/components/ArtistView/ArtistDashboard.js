@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { requestsAPI } from '../../services/api';
@@ -11,16 +11,7 @@ const ArtistDashboard = () => {
   const { artist, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      navigate('/artist/login');
-      return;
-    }
-    loadRequests();
-  }, [isAuthenticated, navigate]);
-
-  const loadRequests = async () => {
+  const loadRequests = useCallback(async () => {
     if (!artist) return;
     
     try {
@@ -34,7 +25,16 @@ const ArtistDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [artist]);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      navigate('/artist/login');
+      return;
+    }
+    loadRequests();
+  }, [isAuthenticated, navigate, loadRequests]);
 
   const handleStatusUpdate = async (requestId, newStatus) => {
     setActionLoading(prev => ({ ...prev, [requestId]: true }));
@@ -83,18 +83,7 @@ const ArtistDashboard = () => {
     return `$${amount.toFixed(2)}`;
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  // Removed unused getStatusColor function
 
   const pendingRequests = requests.filter(req => req.status === 'pending');
   const completedRequests = requests.filter(req => req.status === 'completed');
