@@ -13,7 +13,7 @@
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://requestsong-backend.vercel.app",
+    "REACT_APP_API_URL": "https://requestsong-backend.onrender.com",
     "CI": "false"
   }
 }
