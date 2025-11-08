@@ -137,9 +137,15 @@ The `vercel.json` file in the frontend directory configures:
    - **If still using localhost**: Redeploy your frontend after updating the environment variable
 
 2. **Frontend still calling localhost**
-   - Check that `REACT_APP_API_URL` is set in your Vercel project settings
+   - **Most common cause**: Remove the `"proxy"` setting from `package.json` if present
+   - Check that `REACT_APP_API_URL` is set in your Vercel project settings or `.env.production`
    - Redeploy the frontend after changing environment variables
    - Verify the environment variable is being used: check browser network tab
+
+3. **Proxy setting conflict**
+   - If `package.json` contains `"proxy": "http://localhost:8000"`, remove it
+   - The proxy setting overrides environment variables and forces localhost usage
+   - This is only needed for local development, not production deployment
 
 2. **Build Failures**
    - Check build logs in Vercel dashboard
