@@ -48,6 +48,9 @@ In your Vercel project settings, add:
   - For Fly.io: `https://requestr-backend.fly.dev`
   - For Render: `https://your-service-name.onrender.com`
   - For local development: `http://localhost:8000`
+- `CI`: Set to `false` to prevent treating warnings as errors
+
+**Note**: The `vercel.json` file already includes `CI=false` in the environment variables to prevent build failures from ESLint warnings.
 
 ### 4. Deploy
 
