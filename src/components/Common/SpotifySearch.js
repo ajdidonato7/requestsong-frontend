@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { spotifyAPI } from '../../services/api';
 
 const SpotifySearch = ({ onTrackSelect, placeholder = "Search for a song..." }) => {
@@ -9,9 +9,8 @@ const SpotifySearch = ({ onTrackSelect, placeholder = "Search for a song..." }) 
   const [showResults, setShowResults] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
 
-  // Debounce search function
-  const debounceSearch = useCallback(
-    debounce(async (searchQuery) => {
+  useEffect(() => {
+    const searchTracks = async (searchQuery) => {
       if (!searchQuery.trim()) {
         setTracks([]);
         setShowResults(false);
@@ -32,13 +31,14 @@ const SpotifySearch = ({ onTrackSelect, placeholder = "Search for a song..." }) 
       } finally {
         setLoading(false);
       }
-    }, 500),
-    [setTracks, setShowResults, setLoading, setError]
-  );
+    };
 
-  useEffect(() => {
-    debounceSearch(query);
-  }, [query, debounceSearch]);
+    const timeoutId = setTimeout(() => {
+      searchTracks(query);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [query]);
 
   const handleTrackSelect = (track) => {
     setSelectedTrack(track);
@@ -250,18 +250,5 @@ const SpotifySearch = ({ onTrackSelect, placeholder = "Search for a song..." }) 
     </div>
   );
 };
-
-// Debounce utility function
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
 
 export default SpotifySearch;
