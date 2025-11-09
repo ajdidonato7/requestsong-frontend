@@ -50,11 +50,18 @@ export const artistsAPI = {
 // Requests API
 export const requestsAPI = {
   create: (data) => api.post('/api/requests', data),
-  getByArtist: (username, status = 'pending') => 
+  getByArtist: (username, status = 'pending') =>
     api.get(`/api/requests/${username}?status_filter=${status}`),
   update: (requestId, data) => api.put(`/api/requests/${requestId}`, data),
   delete: (requestId) => api.delete(`/api/requests/${requestId}`),
   reorder: (reorderData) => api.put('/api/requests/reorder', reorderData),
+};
+
+// Spotify API
+export const spotifyAPI = {
+  searchTracks: (query, limit = 20) =>
+    api.get(`/api/spotify/search?q=${encodeURIComponent(query)}&limit=${limit}`),
+  getTrack: (trackId) => api.get(`/api/spotify/track/${trackId}`),
 };
 
 export default api;

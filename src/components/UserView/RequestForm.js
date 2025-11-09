@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import SpotifySearch from '../Common/SpotifySearch';
 
 const RequestForm = ({ onSubmit, artistName }) => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
 
   const {
     register,
@@ -14,20 +16,31 @@ const RequestForm = ({ onSubmit, artistName }) => {
   } = useForm();
 
   const onFormSubmit = async (data) => {
+    // Validate that a track is selected
+    if (!selectedTrack) {
+      setSubmitError('Please select a song from Spotify search results');
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError('');
     setSubmitSuccess(false);
 
     const result = await onSubmit({
-      song_title: data.songTitle,
-      song_artist: data.songArtist,
+      song_title: selectedTrack.song_title,
+      song_artist: selectedTrack.song_artist,
       requester_name: data.requesterName,
       message: data.message || null,
-      tip_amount: data.tipAmount ? parseFloat(data.tipAmount) : null
+      tip_amount: data.tipAmount ? parseFloat(data.tipAmount) : null,
+      spotify_track_id: selectedTrack.spotify_track_id,
+      spotify_track_url: selectedTrack.spotify_track_url,
+      album_image_url: selectedTrack.album_image_url,
+      preview_url: selectedTrack.preview_url
     });
 
     if (result.success) {
       setSubmitSuccess(true);
+      setSelectedTrack(null);
       reset();
       // Clear success message after 3 seconds
       setTimeout(() => setSubmitSuccess(false), 3000);
@@ -36,6 +49,14 @@ const RequestForm = ({ onSubmit, artistName }) => {
     }
 
     setSubmitting(false);
+  };
+
+  const handleTrackSelect = (trackData) => {
+    setSelectedTrack(trackData);
+    // Clear any previous errors when a track is selected
+    if (trackData && submitError.includes('select a song')) {
+      setSubmitError('');
+    }
   };
 
   return (
@@ -65,49 +86,10 @@ const RequestForm = ({ onSubmit, artistName }) => {
         )}
 
         <form onSubmit={handleSubmit(onFormSubmit)}>
-          <div className="form-group">
-            <label htmlFor="songTitle" className="form-label">
-              Song Title *
-            </label>
-            <input
-              type="text"
-              id="songTitle"
-              className={`form-input ${errors.songTitle ? 'form-error' : ''}`}
-              placeholder="Enter song title"
-              {...register('songTitle', {
-                required: 'Song title is required',
-                minLength: {
-                  value: 1,
-                  message: 'Song title cannot be empty'
-                }
-              })}
-            />
-            {errors.songTitle && (
-              <div className="error-message">{errors.songTitle.message}</div>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="songArtist" className="form-label">
-              Song Artist *
-            </label>
-            <input
-              type="text"
-              id="songArtist"
-              className={`form-input ${errors.songArtist ? 'form-error' : ''}`}
-              placeholder="Enter artist/band name"
-              {...register('songArtist', {
-                required: 'Song artist is required',
-                minLength: {
-                  value: 1,
-                  message: 'Song artist cannot be empty'
-                }
-              })}
-            />
-            {errors.songArtist && (
-              <div className="error-message">{errors.songArtist.message}</div>
-            )}
-          </div>
+          <SpotifySearch
+            onTrackSelect={handleTrackSelect}
+            placeholder="Search for a song on Spotify..."
+          />
 
           <div className="form-group">
             <label htmlFor="requesterName" className="form-label">
