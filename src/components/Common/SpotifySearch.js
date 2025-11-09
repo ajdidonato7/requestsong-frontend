@@ -33,7 +33,7 @@ const SpotifySearch = ({ onTrackSelect, placeholder = "Search for a song..." }) 
         setLoading(false);
       }
     }, 500),
-    []
+    [setTracks, setShowResults, setLoading, setError]
   );
 
   useEffect(() => {
